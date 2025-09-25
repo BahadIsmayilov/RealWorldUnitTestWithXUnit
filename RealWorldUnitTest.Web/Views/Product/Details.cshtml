@@ -1,0 +1,33 @@
+﻿@model Product
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <p><b>Name</b></p> @Model.Name
+        </div>
+        <div class="col-12">
+            <p><b>Color</b></p> @Model.Color
+        </div>
+        <div class="col-12">
+            <p><b>Stock</b></p> @Model.Stock
+        </div>
+        <div class="col-12">
+            <p><b>Price</b></p> @Model.Price
+        </div>
+        <div class="col-12">
+            <p><b>UpdateDate</b></p> @Model.UpdateDate
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <a title="Edit AboutImageSection" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-block btn-lg" style="margin: 30px 0">
+            <i class="fa fa-pencil"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-primary btn-block btn-lg" style="margin: 30px 0">
+            <i class="fas fa-long arrow-alt-left"></i> Back to Index
+        </a>
+    </div>
+</div>
