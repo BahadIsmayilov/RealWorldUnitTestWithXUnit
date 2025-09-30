@@ -1,91 +1,92 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RealWorldUnitTest.Web.DAL;
 using RealWorldUnitTest.Web.Models;
-using RealWorldUnitTest.Web.Repositories;
 
 namespace RealWorldUnitTest.Web.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly IRepository<Product> _repository;
-        public ProductController(IRepository<Product> repository)
+        private readonly AppDbContext _context;
+        public ProductController(AppDbContext context)
         {
-            _repository = repository;
+            _context = context;
         }
-        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            return View(await _repository.GetAllAsync());
+            return View(await _context.Products.Include(x => x.Category).ToListAsync());
         }
-        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return BadRequest();
-
-            var product = await _repository.GetByIdAsync((int)id);
-
-            if (product is null) return NotFound();
-
-            return View(product);
+            if (id is null) return NotFound();
+            var productWithCategory = await _context.Products.Include(x => x.Category).FirstOrDefaultAsync(x => x.Id == id);
+            if (productWithCategory is null) return NotFound();
+            return View(productWithCategory);
         }
-        [HttpGet]
         public IActionResult Create()
         {
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> Create(Product product)
         {
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+
             if (!ModelState.IsValid) return View(product);
 
-            await _repository.Create(product);
-
-            return RedirectToAction(nameof(Index));
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
-        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id is null) return BadRequest();
+            if (id is null) return NotFound();
 
-            var product = await _repository.GetByIdAsync((int)id);
+            var productsWithCategory = await _context.Products.Include(c => c.Category).FirstAsync(x => x.Id == id);
 
-            if (product is null) return NotFound();
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", productsWithCategory.CategoryId);
 
-            return View(product);
+            if (productsWithCategory is null) return NotFound();
+
+            return View(productsWithCategory);
         }
-
         [HttpPost]
-        public IActionResult Edit(Product product, int id)
+        public async Task<IActionResult> Edit(int? id, Product product)
         {
-            if (product.Id != id) return BadRequest();
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+
+            if (id != product.Id) return NotFound();
 
             if (!ModelState.IsValid) return View(product);
 
-            _repository.Update(product);
-            return RedirectToAction(nameof(Index));
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
-        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id is null) return NotFound();
 
-            var product = await _repository.GetByIdAsync((int)id);
+            var productsWithCategory = await _context.Products.Include(c => c.Category).FirstAsync(x => x.Id == id);
 
-            if (product is null) return NotFound();
+            if (productsWithCategory is null) return NotFound();
 
-            return View(product);
+            return View(productsWithCategory);
         }
         [HttpPost]
-        public async Task<IActionResult> DeleteConfirm(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var product = await _repository.GetByIdAsync(id);
-            if (product is null) return NotFound();
-            _repository.Delete(product);
-            return RedirectToAction(nameof(Index));
+            if (id is null) return NotFound();
+
+            var productsWithCategory = await _context.Products.Include(c => c.Category).FirstAsync(x => x.Id == id);
+
+            if (productsWithCategory is null) return NotFound();
+
+            _context.Products.Remove(productsWithCategory);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
-        
     }
 }
