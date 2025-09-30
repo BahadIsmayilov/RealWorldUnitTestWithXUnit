@@ -22,6 +22,36 @@ namespace RealWorldUnitTest.Web.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("RealWorldUnitTest.Web.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Electronics"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Books"
+                        });
+                });
+
             modelBuilder.Entity("RealWorldUnitTest.Web.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -29,6 +59,9 @@ namespace RealWorldUnitTest.Web.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -54,7 +87,45 @@ namespace RealWorldUnitTest.Web.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Products", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryId = 1,
+                            Color = "Black",
+                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Laptop",
+                            Price = 1200m,
+                            Stock = 12
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CategoryId = 2,
+                            Color = "Blue",
+                            CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "C# Book",
+                            Price = 40m,
+                            Stock = 5
+                        });
+                });
+
+            modelBuilder.Entity("RealWorldUnitTest.Web.Models.Product", b =>
+                {
+                    b.HasOne("RealWorldUnitTest.Web.Models.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("RealWorldUnitTest.Web.Models.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
