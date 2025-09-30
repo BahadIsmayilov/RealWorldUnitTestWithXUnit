@@ -226,4 +226,3 @@
 /Users/ismayilovbahad/Documents/RealWorldUnitTest.Web/RealWorldUnitTest.Web/bin/Debug/net9.0/runtimes/win/lib/net6.0/System.Windows.Extensions.dll
 /Users/ismayilovbahad/Documents/RealWorldUnitTest.Web/RealWorldUnitTest.Web/obj/Debug/net9.0/RealWorldUnitTest.Web.csproj.AssemblyReference.cache
 /Users/ismayilovbahad/Documents/RealWorldUnitTest.Web/RealWorldUnitTest.Web/obj/Debug/net9.0/RealWorl.B0776084.Up2Date
-/Users/ismayilovbahad/Documents/RealWorldUnitTest.Web/RealWorldUnitTest.Web/obj/Debug/net9.0/RealWorldUnitTest.Web.sourcelink.json
